@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>三减实验室：揪出健康元凶</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#1a1a2e;display:flex;justify-content:center}
+.phone{width:100%;max-width:430px;background:#FFF9F0;min-height:100vh;position:relative}
+.topbar{position:sticky;top:0;background:#FFF9F0;padding:12px 20px;z-index:10;display:flex;align-items:center;gap:10px;border-bottom:1px solid #eee}
+.progress-bg{flex:1;height:8px;background:#eee;border-radius:10px;overflow:hidden}
+#bar{height:100%;width:10%;background:linear-gradient(90deg,#2B5CFF,#00d2ff);transition:.3s}
+#pageNum{font-size:12px;color:#888}
+.page{display:none;padding:20px 20px 40px;min-height:90vh;animation:fade .4s}
+.page.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+h1{text-align:center;font-size:32px;margin:10px 0;color:#1a1a2e}
+h2{font-size:22px;margin:10px 0 12px;color:#1a1a2e}
+.subtitle{text-align:center;color:#666;line-height:1.6;margin-bottom:10px}
+.card{background:#fff;border-radius:16px;padding:16px;margin:14px 0;box-shadow:0 4px 12px rgba(0,0,0,.07);line-height:1.7;font-size:15px}
+.tag{display:inline-block;font-size:12px;padding:4px 10px;border-radius:20px;color:#fff;margin-bottom:8px}
+.blue{background:#2B5CFF}.orange{background:#FF9F1C}.pink{background:#FF5D8F}.green{background:#00b894}
+.big{font-size:48px;text-align:center;margin:15px 0}
+.btn{display:block;width:100%;padding:14px;background:#2B5CFF;color:#fff;border:none;border-radius:50px;font-size:17px;margin-top:18px;cursor:pointer;font-weight:bold}
+.btn.orange{background:#FF9F1C}.btn.pink{background:#FF5D8F}.btn.green{background:#00b894}.btn.dark{background:#1a1a2e}
+.option{background:#fff;border:2px solid #eee;border-radius:12px;padding:14px;margin:10px 0;cursor:pointer;font-size:15px}
+.option:active{transform:scale(.98)}
+.option.correct{border-color:#00c853;background:#e8f5e9}
+.option.wrong{border-color:#ff5252;background:#ffebee}
+.tip{display:none;background:#e3f2fd;border-radius:12px;padding:12px;margin-top:12px;font-size:14px;line-height:1.7}
+.nav{display:flex;justify-content:space-between;margin-top:24px}
+.nav button{background:none;border:none;color:#999;font-size:14px;padding:10px;cursor:pointer}
+.foot{text-align:center;font-size:12px;color:#999;margin-top:18px;line-height:1.8}
+input{width:100%;padding:12px;border-radius:10px;border:2px solid #eee;font-size:15px;margin-top:10px}
+#cert{display:none;background:#1a1a2e;color:#fff;border-radius:16px;padding:20px;margin-top:15px;text-align:center;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="phone">
+<div class="topbar"><div class="progress-bg"><div id="bar"></div></div><div id="pageNum">1/10</div></div>
+
+<!-- P1 封面 -->
+<div class="page active" id="p1">
+<div class="big">🧪</div>
+<h1>三减实验室</h1>
+<p class="subtitle">吃掉的隐形负担<br>3分钟测出你超标了多少</p>
+<div class="card" style="text-align:center;font-size:28px">🍜🧂<br>🍔💧🍰<br><span style="font-size:13px;color:#666"></div>
+<div class="card"><b>👋 你是健康侦探，揪出健康元凶</b><br>任务：从外卖奶茶里，揪出隐形盐油糖。</div>
+<button class="btn" onclick="go(2)">开始检测 →</button>
+<p class="foot">[辽宁师范大学海华学院] · [历史冲向世界]<br>2026辽宁省大学生科普设计大赛</p>
+</div>
+
+<!-- P2 数据 -->
+<div class="page" id="p2">
+<span class="tag blue">数据暴击</span>
+<h2>日常摄食太“重”了！</h2>
+<div class="card">🧂 <b>盐 10.5g/天</b><br>达标准2.1倍（超1.1倍）！标准：<5g≈1啤酒盖</div>
+<div class="card">🫗 <b>油 43g/天</b><br>43g/天，达上限1.4倍（超43%）！标准：25-30g≈2勺</div>
+<div class="card">🍬 <b>糖 常超50g/天</b><br>1瓶可乐就53g！上限50g，理想目标<25g</div>
+<p style="font-size:14px;color:#666">数据来源：中国居民膳食指南2022</p>
+<button class="btn" onclick="go(3)">揪出真凶 →</button>
+<div class="nav"><button onclick="prev()">←上页</button></div>
+</div>
+
+<!-- P3 盐提问 -->
+<div class="page" id="p3">
+<span class="tag blue">盐实验室 1/2</span>
+<h2>一包方便面+调料，含盐多少？</h2>
+<div>
+<div class="option" onclick="answer(this,false,'tip3','❌ 错了！不止2g。<br>✅ 答案是 <b>6.5g</b>，一包顶一天！一碗兰州拉面汤也有6-8g。')">A. 2g</div>
+<div class="option" onclick="answer(this,true,'tip3','✅ 答对了！就是 <b>6.5g</b>。<br>成人一天要＜5g，一包方便面就超标。高盐=高血压+水肿。')">B. 6.5g</div>
+<div class="option" onclick="answer(this,false,'tip3','❌ 太夸张了。<br>✅ 答案是 <b>6.5g</b>，但已经是一天的量了！')">C. 10g</div>
+</div>
+<div id="tip3" class="tip"></div>
+<button class="btn" onclick="go(4)">查看盐的危害 →</button>
+<div class="nav"><button onclick="prev()">←上页</button></div>
+</div>
+
+<!-- P4 盐答案 -->
+<div class="page" id="p4">
+<span class="tag blue">盐实验室 2/2</span>
+<h2>盐多必失</h2>
+<div class="card">🍜 一碗面汤 = 1.5天盐<br>🥓 1根火腿肠 = 1g盐<br>🥒 1包榨菜 = 2g盐</div>
+<div class="card">⚠️ 高盐危害：高血压、水肿、伤肾<br>💡 记住：<b>＜5g≈1啤酒盖</b></div>
+<button class="btn orange" onclick="go(5)">进入油实验室 →</button>
+<div class="nav"><button onclick="prev()">←上页</button></div>
+</div>
+
+<!-- P5 油提问 -->
+<div class="page" id="p5">
+<span class="tag orange">油实验室 1/2</span>
+<h2>中午三选一，你点哪个？</h2>
+<div>
+<div class="option" onclick="answer(this,false,'tip5','🍗 你选了黄焖鸡！吸油纸能吸透<b>2整张</b>，约30g油=2天油。<br>下次记得备注：少油！')">A. 🍗 黄焖鸡米饭</div>
+<div class="option" onclick="answer(this,false,'tip5','🍲 麻辣烫看似清淡，芝麻酱+辣油一拌，油也超25g。<br>建议：清汤+少酱。')">B. 🍲 麻辣烫</div>
+<div class="option" onclick="answer(this,true,'tip5','✅ 聪明！轻食沙拉油最少。<br>但注意沙拉酱也是油，选油醋汁更健康。')">C. 🥗 轻食沙拉</div>
+</div>
+<div id="tip5" class="tip"></div>
+<button class="btn orange" onclick="go(6)">查看油的真相 →</button>
+<div class="nav"><button onclick="prev()">←上页</button></div>
+</div>
+
+<!-- P6 油答案 -->
+<div class="page" id="p6">
+<span class="tag orange">油实验室 2/2</span>
+<h2>一份炸鸡 = 2汤勺油</h2>
+<div class="card">🍗 1份炸鸡 ≈30g油<br>🥐 1个酥饼 ≈3勺油<br>🧋 奶茶植脂末也是油！</div>
+<div class="card">⚠️ 误区：不吃肥肉≠不吃油<br>💡 记住：<b>25-30g≈2白瓷勺</b></div>
+<button class="btn pink" onclick="go(7)">进入糖实验室 →</button>
+<div class="nav"><button onclick="prev()">←上页</button></div>
+</div>
+
+<!-- P7 糖提问 -->
+<div class="page" id="p7">
+<span class="tag pink">糖实验室 1/2</span>
+<h2>500ml珍珠奶茶全糖=几块方糖？</h2>
+<div>
+<div class="option" onclick="answer(this,false,'tip7','❌ 太少了！<br>✅ 答案是 <b>14块≈56g糖</b>，堆起来一座小塔。')">A. 5块</div>
+<div class="option" onclick="answer(this,false,'tip7','❌ 还是少了！<br>✅ 答案是 <b>14块≈56g糖</b>，超标2倍。')">B. 9块</div>
+<div class="option" onclick="answer(this,true,'tip7','✅ 对！就是 <b>14块≈56g</b>！<br>1瓶可乐53g，喝完血糖坐过山车，先兴奋后犯困。')">C. 14块</div>
+</div>
+<div id="tip7" class="tip"></div>
+<button class="btn pink" onclick="go(8)">查看隐形糖 →</button>
+<div class="nav"><button onclick="prev()">←上页</button></div>
+</div>
+
+<!-- P8 糖答案 -->
+<div class="page" id="p8">
+<span class="tag pink">糖实验室 2/2</span>
+<h2>0蔗糖≠0糖</h2>
+<div class="card">🧃 果汁：丢纤维，升糖快<br>🥛 酸奶：1杯+15g糖<br>🥫 番茄酱：1勺+4g糖</div>
+<div class="card">💡 记住：添加糖<b>＜50g，最好＜25g</b><br>奶茶选半糖/三分糖</div>
+<button class="btn green" onclick="go(9)">生成我的诊断 →</button>
+<div class="nav"><button onclick="prev()">←上页</button></div>
+</div>
+
+<!-- P9 自测 -->
+<div class="page" id="p9">
+<span class="tag green">谣言粉碎机</span>
+<h2>终极3连问</h2>
+<p style="font-size:14px;color:#666">1. 零蔗糖可以随便喝？</p>
+<div class="option" onclick="answer(this,false,'tip9a','❌ 错！还有果糖、代糖，照样胖。')">对</div>
+<div class="option" onclick="answer(this,true,'tip9a','✅ 对！零蔗糖≠无糖。')">错</div>
+<div id="tip9a" class="tip"></div>
+<p style="font-size:14px;color:#666;margin-top:10px">2. 喝果汁=吃水果补维C？</p>
+<div class="option" onclick="answer(this,false,'tip9b','❌ 错！果汁丢了纤维，升糖更快。')">对</div>
+<div class="option" onclick="answer(this,true,'tip9b','✅ 对！想补维C直接吃水果。')">错</div>
+<div id="tip9b" class="tip"></div>
+<button class="btn green" onclick="go(10)">领取行动卡 →</button>
+<div class="nav"><button onclick="prev()">←上页</button></div>
+</div>
+
+<!-- P10 封底 -->
+<div class="page" id="p10">
+<span class="tag green">我的行动</span>
+<h2>少一点，好很多</h2>
+<div class="card">📋 7日挑战：<br>1.奶茶半糖 2.外卖备注少油少盐<br>3.日行6000步</div>
+<p style="font-size:14px">输入昵称，生成你的承诺书：</p>
+<input id="nickname" placeholder="例如：奶茶戒断者">
+<button class="btn dark" onclick="genCard()">生成我的承诺书</button>
+<div id="cert">
+<div style="font-size:24px">🏅 健康承诺书</div>
+<div>我是 <b id="certName"></b></div>
+<div>本次答题得分 <b id="certScore"></b> / 6</div>
+<div id="certAdvice" style="font-size:14px;color:#ffd166"></div>
+<div style="font-size:12px;color:#aaa;margin-top:8px">截图发朋友圈</div>
+</div>
+<p class="foot">数据来源：中国居民膳食指南2022、健康素养66条</p>
+<div class="nav"><button onclick="prev()">←上页</button></div>
+</div>
+
+</div>
+<script>
+let cur=1,total=10,score=0;
+function go(n){
+document.getElementById('p'+cur).classList.remove('active');
+cur=n;
+document.getElementById('p'+cur).classList.add('active');
+document.getElementById('bar').style.width=(cur/total*100)+'%';
+document.getElementById('pageNum').innerText=cur+'/'+total;
+window.scrollTo(0,0);
+}
+function next(){if(cur<total)go(cur+1)}
+function prev(){if(cur>1)go(cur-1)}
+function answer(el,isCorrect,tipId,text){
+let opts=el.parentElement.querySelectorAll('.option');
+opts.forEach(o=>o.style.pointerEvents='none');
+if(isCorrect){el.classList.add('correct');score++;}else{el.classList.add('wrong');}
+let tip=document.getElementById(tipId);
+tip.style.display='block';tip.innerHTML=text;
+}
+function genCard(){
+let name=document.getElementById('nickname').value||'健康达人';
+document.getElementById('certName').innerText=name;
+document.getElementById('certScore').innerText=score;
+let adv='';
+if(score>=5)adv='评价：绿色健康达人，继续保持！';
+else if(score>=3)adv='评价：黄色轻度超标，奶茶减半！';
+else adv='评价：红色危险，外卖要点少油少盐！';
+document.getElementById('certAdvice').innerText=adv;
+document.getElementById('cert').style.display='block';
+}
+</script>
+</body>
+</html>
